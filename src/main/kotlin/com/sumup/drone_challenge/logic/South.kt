@@ -1,6 +1,7 @@
 package com.sumup.drone_challenge.logic
 
 class South(orientation: Orientation?, minX: Int, maxX: Int, minY: Int, maxY: Int) : Direction() {
+
     override val name = "SOUTH"
 
     init {

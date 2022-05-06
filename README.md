@@ -37,8 +37,7 @@ example response:
     "west": {
       "name": "WEST"
     }
-  },
-  "errors": null
+  }
 }
 ```
 2. Go forward, example response:
@@ -74,8 +73,7 @@ example response:
   "data": {
     "x": 9,
     "y": 5
-  },
-  "errors": null
+  }
 }
 ```
 

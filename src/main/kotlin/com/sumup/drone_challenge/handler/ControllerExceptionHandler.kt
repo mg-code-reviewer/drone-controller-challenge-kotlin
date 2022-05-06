@@ -12,9 +12,8 @@ import org.springframework.web.context.request.WebRequest
 
 @ControllerAdvice
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class ControllerExceptionHadler : BaseExceptionHandler() {
+class ControllerExceptionHandler : BaseExceptionHandler() {
     @ExceptionHandler(Exception::class)
-    fun handleDroneException(ex: Exception?, request: WebRequest?): ResponseEntity<ResponseError> {
-        return ResponseEntity(generateResponseError(ex!!, ErrorCauses.ERROR_IN_REQUEST), HttpStatus.CONFLICT)
-    }
+    fun handleDroneException(ex: Exception, request: WebRequest?): ResponseEntity<ResponseError> =
+        ResponseEntity(generateResponseError(ex, ErrorCauses.ERROR_IN_REQUEST), HttpStatus.CONFLICT)
 }

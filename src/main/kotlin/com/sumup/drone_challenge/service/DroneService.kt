@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class DroneService {
-    private val sector = Sector(10, 10)
-    val drone: Drone
+
+    private final val sector = Sector(10, 10)
+
+    final val drone: Drone
 
     init {
         //Randomly choose the position and direction of the drone on the sector

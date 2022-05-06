@@ -31,22 +31,22 @@ class Orientation(minX: Int, maxX: Int, minY: Int, maxY: Int) {
         directions.forEach(Consumer { obj: IDirection -> obj.init() })
     }
 
-    fun setNorth(north: North): North {
+    private fun setNorth(north: North): North {
         this.north = north
         return north
     }
 
-    fun setEast(east: East): East {
+    private fun setEast(east: East): East {
         this.east = east
         return east
     }
 
-    fun setSouth(south: South): South {
+    private fun setSouth(south: South): South {
         this.south = south
         return south
     }
 
-    fun setWest(west: West): West {
+    private fun setWest(west: West): West {
         this.west = west
         return west
     }

@@ -42,7 +42,8 @@ class Drone {
         this.x = x
         this.y = y
         this.direction =
-            if (Arrays.binarySearch(DIRECTIONS, direction) > 0) Arrays.binarySearch(DIRECTIONS, direction) else 0
+            if (Arrays.binarySearch(DIRECTIONS, direction) > 0) Arrays.binarySearch(DIRECTIONS, direction)
+            else 0
         when (direction) {
             "N" -> droneState.direction = droneState.north
             "E" -> droneState.direction = droneState.east

@@ -1,47 +1,47 @@
 package com.sumup.drone_challenge.logic
 
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
 class DroneTest {
     @Test
-    fun testDroneSectorConstructor() {
+    fun `test drone sector constructor`() {
         val maximumX = 10
         val maximumY = 10
         val sector = Sector(maximumX, maximumY)
         val drone = Drone(sector)
-        Assertions.assertEquals(0, drone.x)
-        Assertions.assertEquals(0, drone.y)
-        Assertions.assertEquals("NORTH", drone.getDirection())
-        Assertions.assertEquals(Sector(maximumX, maximumY), drone.sector)
+        assertEquals(0, drone.x)
+        assertEquals(0, drone.y)
+        assertEquals("NORTH", drone.getDirection())
+        assertEquals(Sector(maximumX, maximumY), drone.sector)
     }
 
     @Test
-    fun testDroneSectorXYDirectionConstructor() {
+    fun `test drone sector X and Y direction constructor`() {
         val maximumX = 10
         val maximumY = 10
         val x = 1
         val y = 1
         val sector = Sector(maximumX, maximumY)
         val drone = Drone(sector, x, y, "S")
-        Assertions.assertEquals(x, drone.x)
-        Assertions.assertEquals(y, drone.y)
-        Assertions.assertEquals("SOUTH", drone.getDirection())
-        Assertions.assertEquals(Sector(maximumX, maximumY), drone.sector)
+        assertEquals(x, drone.x)
+        assertEquals(y, drone.y)
+        assertEquals("SOUTH", drone.getDirection())
+        assertEquals(Sector(maximumX, maximumY), drone.sector)
     }
 
     @Test
-    fun testDroneSectorXYOtherDirectionConstructor() {
+    fun `test drone sector X Y and other direction constructor`() {
         val maximumX = 10
         val maximumY = 10
         val x = 1
         val y = 1
         val sector = Sector(maximumX, maximumY)
         val drone = Drone(sector, x, y, "E")
-        Assertions.assertEquals(x, drone.x)
-        Assertions.assertEquals(y, drone.y)
+        assertEquals(x, drone.x)
+        assertEquals(y, drone.y)
     }
 
     @ParameterizedTest
@@ -56,7 +56,7 @@ class DroneTest {
         "3, 3, 2, 2, W, F, WEST, 1, 2",
         "3, 3, 2, 2, S, F, SOUTH, 2, 1"
     )
-    fun testRunCommandParameterized(
+    fun `test run command parameterized`(
         maximumX: Int,
         maximumY: Int,
         x: Int,
@@ -70,17 +70,16 @@ class DroneTest {
         val sector = Sector(maximumX, maximumY)
         val drone = Drone(sector, x, y, directionStr)
         runCommand(drone, command)
-        Assertions.assertEquals(expectedDirection, drone.getDirection())
-        Assertions.assertEquals(expectedX, drone.x)
-        Assertions.assertEquals(expectedY, drone.y)
+        assertEquals(expectedDirection, drone.getDirection())
+        assertEquals(expectedX, drone.x)
+        assertEquals(expectedY, drone.y)
     }
 
-    private fun runCommand(drone: Drone, direction: String?) {
+    private fun runCommand(drone: Drone, direction: String?) =
         when (direction) {
             "R" -> drone.droneState.direction!!.turnRight()
             "L" -> drone.droneState.direction!!.turnLeft()
             "F" -> drone.droneState.direction!!.moveForward()
             else -> {}
         }
-    }
 }

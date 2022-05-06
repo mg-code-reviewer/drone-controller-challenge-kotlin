@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 
 class SectorTest {
     @Test
-    fun testSectorInstantiation() {
+    fun `test sector instantiation`() {
         val maximumX = 10
         val maximumY = 10
         val sector = Sector(maximumX, maximumY)

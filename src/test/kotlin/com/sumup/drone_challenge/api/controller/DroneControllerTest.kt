@@ -14,24 +14,21 @@ import com.sumup.drone_challenge.logic.Rotation
 import com.sumup.drone_challenge.logic.Validator
 import com.sumup.drone_challenge.service.DroneService
 import io.mockk.every
-import java.time.Clock
-import javax.validation.ConstraintViolation
-import javax.validation.ConstraintViolationException
-import javax.validation.Validation
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.time.Clock
+import javax.validation.ConstraintViolation
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(controllers = [DroneController::class])
@@ -58,9 +55,8 @@ class DroneControllerTest {
     lateinit var clock: Clock
 
     @Test
-    @Throws(Exception::class)
-    fun testDroneRotate() {
-        val response = buildOrientationResponse()
+    fun `test drone rotate`() {
+        val request = buildOrientationResponse()
         every { (validator).validate(any()) } returns Unit
         every { droneService.orientation } returns buildOrientation()
         every { (droneService.drone) } returns drone
@@ -71,22 +67,21 @@ class DroneControllerTest {
         val objectWriter = ObjectMapper().writer().withDefaultPrettyPrinter()
 
         //Executing the test
-        val reponse = mockMvc.perform(
-            MockMvcRequestBuilders.put(CONTEXT_URL + DRONE_ROTATION).contextPath(
-                CONTEXT_URL
-            )
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(objectWriter.writeValueAsString(response))
+        val response = mockMvc.perform(
+            MockMvcRequestBuilders.put(CONTEXT_URL + DRONE_ROTATION)
+                .contextPath(CONTEXT_URL)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectWriter.writeValueAsString(request))
         )
             .andReturn()
             .response
             .contentAsString
-        Assertions.assertThat(reponse.isEmpty()).isFalse
+
+        assertThat(response.isEmpty()).isFalse
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testDroneRotateHttpStatus400() {
-        val response = buildOrientationResponse()
+    fun `test drone rotate http status 400`() {
         val rotation = Rotation()
         rotation.rotation = "Z"
         val responseError = buildResponseErrorForRotateDrone(rotation)
@@ -100,16 +95,17 @@ class DroneControllerTest {
 
         //Executing the test
         mockMvc.perform(
-            MockMvcRequestBuilders.put(CONTEXT_URL + DRONE_ROTATION).contextPath(CONTEXT_URL)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(objectWriter.writeValueAsString(responseError))
+            MockMvcRequestBuilders.put(CONTEXT_URL + DRONE_ROTATION)
+                .contextPath(CONTEXT_URL)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectWriter.writeValueAsString(responseError))
         )
             .andExpect(MockMvcResultMatchers.status().is4xxClientError)
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testDroneMoveForward() {
-        val response = buildOrientationResponse()
+    fun `test drone move forward`() {
+        val request = buildOrientationResponse()
         every { (validator).validate(any()) } returns Unit
         every { (droneService.orientation) } returns buildOrientation()
         every { (droneService.drone) } returns drone
@@ -121,24 +117,27 @@ class DroneControllerTest {
 
         //Executing the test
         mockMvc.perform(
-            MockMvcRequestBuilders.put(CONTEXT_URL + DRONE_FORWARD).contextPath(CONTEXT_URL)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(objectWriter.writeValueAsString(response))
+            MockMvcRequestBuilders.put(CONTEXT_URL + DRONE_FORWARD)
+                .contextPath(CONTEXT_URL)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectWriter.writeValueAsString(request))
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
-    @Throws(Exception::class)
     fun testDroneWhere() {
-        val response = buildPositionResponse()
+        val request = buildPositionResponse()
         every { (droneService.where()) } returns buildPosition()
         every { (clock.millis()) } returns 1L
         val objectWriter = ObjectMapper().writer().withDefaultPrettyPrinter()
 
         //Executing the test
         mockMvc.perform(
-            MockMvcRequestBuilders.get(CONTEXT_URL + DRONE_WHERE).contextPath(CONTEXT_URL)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(objectWriter.writeValueAsString(response))
+            MockMvcRequestBuilders.get(CONTEXT_URL + DRONE_WHERE)
+                .contextPath(CONTEXT_URL)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectWriter.writeValueAsString(request))
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
@@ -151,8 +150,7 @@ class DroneControllerTest {
 
     private fun buildOrientationResponse(): Response<Orientation> {
         val orientation = buildOrientation()
-        val response = Response(orientation)
-        return response
+        return Response(orientation)
     }
 
     private fun buildPosition(): Position {
@@ -162,21 +160,17 @@ class DroneControllerTest {
         return position
     }
 
-    private fun buildPositionResponse(): Response<Position> {
-        val position = buildPosition()
-        val response = Response(position)
-        return response
-    }
+    private fun buildPositionResponse(): Response<Position> = Response(buildPosition())
 
-    private fun buildViolation(ob: Any): ConstraintViolation<Any> {
+    private fun buildViolation(obj: Any): ConstraintViolation<Any> {
         val violationSet =
-            Validation.buildDefaultValidatorFactory().validator.validate(ob)
-        val error = Error()
-        return violationSet.toTypedArray()[0]
+            Validation.buildDefaultValidatorFactory().validator.validate(obj)
+        return violationSet.toTypedArray().first()
     }
 
-    private fun buildResponseErrorForRotateDrone(ob: Any): ResponseError {
-        val violation: ConstraintViolation<Rotation> = buildViolation(ob) as ConstraintViolation<Rotation>
+    @Suppress("UNCHECKED_CAST")
+    private fun buildResponseErrorForRotateDrone(obj: Any): ResponseError {
+        val violation: ConstraintViolation<Rotation> = buildViolation(obj) as ConstraintViolation<Rotation>
         val error = Error()
         error.code = ErrorCauses.ERROR_IN_REQUEST.id
         error.description = ErrorCauses.ERROR_IN_REQUEST.message
